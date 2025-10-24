@@ -2,5 +2,12 @@
   "dependencies": {
     "bootstrap": "^5.3.8",
     "vue-router": "^4.6.3"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check \"build-only {@}\" --",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --build"
   }
 }

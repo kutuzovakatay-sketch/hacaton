@@ -4,18 +4,18 @@
 
 <template>
     <div class="start-info">
-        <a href="#/start"><button class="back-button buttons">Назад</button></a>
-        <span><p>Регистрация</p></span>
+        <a href="#/signup"><button class="back-button buttons">Назад</button></a>
+        <span><p>Введите код</p></span>
   
       <div class="inputs">
         <div class="text1">
-          <p>Почта / Номер телефона</p>
+          <p>Код:</p>
           <input type="text" class="style-input" placeholder="Введите..." />
         </div>  
       </div>
   
       <div class="buttons">
-        <a href="#/enterCode"><button class="button1">Отправить СМС-код</button></a>
+        <a href="#/enterCode"><button class="button1">Подтвердить</button></a>
       </div>
     </div>
   </template>

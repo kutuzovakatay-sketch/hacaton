@@ -1,11 +1,10 @@
-<script>
-   
-</script>
-
 <template>
     <div class="start-info">
-        <a href="#/start"><button class="back-button buttons">Назад</button></a>
-        <span><p>Регистрация</p></span>
+      <a href="#/login"><button class="back-button buttons">Назад</button></a>
+      <span class="vk-login">
+        <img src="../assets/vk-1-logo-svgrepo-com.svg" alt="VK logo" />
+        <p>Вход c VK ID</p>
+      </span>
   
       <div class="inputs">
         <div class="text1">
@@ -15,7 +14,9 @@
       </div>
   
       <div class="buttons">
-        <a href="#/enterCode"><button class="button1">Отправить СМС-код</button></a>
+        <button class="button1">Войти</button>
+        <div class="divider"><p>или</p></div>
+        <button class="button1">Войти по QR-коду</button>
       </div>
     </div>
   </template>
@@ -26,11 +27,6 @@
     flex-direction: column;
     gap: 30px;
   }
-  span{
-        font-size: 36px;
-        display: flex;
-        justify-content: center;
-    }
   
   /* Кнопка назад */
 .back-button {
@@ -46,6 +42,21 @@
   align-items: center;
   gap: 6px;
   transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.vk-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 36px;
+  gap: 10px;
+  margin-top: 30px;
+}
+  
+.vk-login img {
+    width: 60px;             /* фиксированный размер */
+    height: 60px;
+    object-fit: contain;
 }
   
 .inputs {
@@ -127,8 +138,5 @@
   p {
     margin-bottom: 0.5rem;
   }
-  a {
-    text-decoration: none;
-    } 
   </style>
   
