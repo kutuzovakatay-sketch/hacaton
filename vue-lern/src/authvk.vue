@@ -1,4 +1,5 @@
 <template>
+  {# Проверка работоспособности второй ветви SashaEdit #}
     <div class="start-info">
       <a href="#/login"><button class="back-button buttons">Назад</button></a>
       <span class="vk-login">
