@@ -1,10 +1,14 @@
 <script setup>
 import { ref } from 'vue'
+import router from './router'
 
 const activeTab = ref('login')
 
 function switchTab(tab) {
   activeTab.value = tab
+}
+function navigate(){
+  router.push({path: '/authvk'})
 }
 </script>
 
@@ -48,7 +52,7 @@ function switchTab(tab) {
         </div>
 
         <div class="buttons">
-          <button class="vk-btn">Войти с помощью VK ID</button>
+          <button class="vk-btn" @click="navigate()">Войти с помощью VK ID</button>
           <button class="main-btn">Войти</button>
           <a href="#" class="forgot">Забыли пароль?</a>
         </div>
