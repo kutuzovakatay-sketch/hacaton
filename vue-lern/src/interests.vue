@@ -1,7 +1,7 @@
 <template>
     <div class="interests-page">
       <button class="back-button">
-        <img src="../assets/back-icon.svg" alt="Назад">
+        <img src="../assets/L Arrow Up Left.svg" alt="Назад">
       </button>
   
       <div class="header">
