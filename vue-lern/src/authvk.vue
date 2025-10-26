@@ -1,23 +1,33 @@
+<script>
+import router from './router'
+
+function navigate(){
+  router.push({path: '/login'})
+}
+</script>
+
 <template>
     <div class="start-info">
-      <a href="#/login"><button class="back-button buttons">Назад</button></a>
+      <a href="#/login" class="back-button"><img src="../assets/L Arrow Up Left.svg"></a>
       <span class="vk-login">
-        <img src="../assets/vk-1-logo-svgrepo-com.svg" alt="VK logo" />
+        <img src="../assets/vk id.svg" alt="VK logo" />
         <p>Вход c VK ID</p>
       </span>
   
-      <div class="inputs">
+      <span>
+        <div class="inputs">
         <div class="text1">
-          <p>Почта / Номер телефона</p>
-          <input type="text" class="style-input" placeholder="Введите..." />
+          <input type="text" class="style-input" placeholder="Телефон или почта" />
         </div>  
       </div>
   
       <div class="buttons">
         <button class="button1">Войти</button>
         <div class="divider"><p>или</p></div>
-        <button class="button1">Войти по QR-коду</button>
+        <button class="button2">Войти по QR-коду</button>
       </div>
+      </span>
+      <button class="buttons button3" @click="navigate()">Зарегистрироваться</button>
     </div>
   </template>
   
@@ -25,22 +35,18 @@
   .start-info {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 0px;
   }
   
-  /* Кнопка назад */
-.back-button {
+  .back-button {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 20px;
+  left: 20px;
   background: none;
   border: none;
-  color: #4a4a4a;
   font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  color: #4a4a4a;
   transition: transform 0.2s ease, color 0.2s ease;
 }
 
@@ -49,13 +55,12 @@
   flex-direction: column;
   align-items: center;
   font-size: 36px;
-  gap: 10px;
+  gap: 20px;
   margin-top: 30px;
 }
   
 .vk-login img {
-    width: 60px;             /* фиксированный размер */
-    height: 60px;
+    width: 40%;             
     object-fit: contain;
 }
   
@@ -64,7 +69,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 50px;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
 }
   
 .buttons {
@@ -80,27 +85,30 @@
 }
   
 .text1 {
-    font-size: 16px;
+    font-size: 14px;
 }
   
 .button1 {
-    width: 241px;
-    height: 39px;
+    width: 295px;
+    height: 40px;
+    background: #0077FF;
+    
 }
   
-.button2 {
-    width: 241px;
-    height: 44px;
+.button2,
+.button3 {
+    width: 295px;
+    height: 40px;
+    background: #3D3D3D;
 }
-.back-button {
-    width: 80px;
-    height: 39px;
+
+.button3{
+  margin-top: 10rem;
 }
   
 .button1,
 .button2,
-.back-button {
-    background: #e94dc9;
+.button3 {
     border-radius: 20px;
     display: flex;
     justify-content: center;
@@ -109,6 +117,7 @@
     transition: transform 500ms ease;
     font-size: 20px;
     border: none;
+    color:white;
   }
   
   .button1:hover,
@@ -118,25 +127,22 @@
   }
   
   .style-input {
-    width: 287px;
-    height: 37px;
+    width: 295px;
+    height: 33px;
     padding: 12px 20px;
     font-size: 16px;
     border: 2px solid #ccc;
-    border-radius: 8px;
+    border-radius: 10px;
     outline: none;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    background-color: #E3E3E3;
   }
   
   .style-input:focus {
     border-color: #4A90E2;
     box-shadow: 0 0 8px rgba(74,144,226,0.6);
     background-color: #fff;
-  }
-  
-  p {
-    margin-bottom: 0.5rem;
   }
   </style>
   

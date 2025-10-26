@@ -90,6 +90,9 @@ function validateAndSubmit() {
     }
   }
 }
+function navigate(){
+  router.push({path: '/authvk'})
+}
 </script>
 
 <template>
