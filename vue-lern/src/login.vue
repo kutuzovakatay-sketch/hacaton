@@ -1,5 +1,100 @@
 <script setup>
 
+<<<<<<< HEAD
+=======
+// const activeTab = ref('login')
+
+// function switchTab(tab) {
+//   activeTab.value = tab
+// }
+
+
+
+import { reactive, ref, nextTick } from 'vue';
+
+const activeTab = ref('login');
+
+const loginInputs = reactive({ username: '', password: '' });
+const registerInputs = reactive({ username: '', password: '', passwordConfirm: '' });
+
+const errors = reactive({
+  login: { username: false, password: false },
+  register: { username: false, password: false, passwordConfirm: false }
+});
+
+function switchTab(tab) {
+  activeTab.value = tab;
+  clearErrors();
+}
+
+function clearErrors() {
+  errors.login.username = false;
+  errors.login.password = false;
+  errors.register.username = false;
+  errors.register.password = false;
+  errors.register.passwordConfirm = false;
+}
+
+function shakeField(fieldName, form) {
+  // триггерим анимацию окрашивания и "пошатывания"
+  nextTick(() => {
+    const refName = '${form}'-'${fieldName}';
+    const el = document.querySelector([ref='${refName}']);
+    if (el) {
+      el.classList.remove('shake');
+      // триггер повторной анимации
+      void el.offsetWidth;
+      el.classList.add('shake');
+    }
+  });
+}
+
+function validateAndSubmit() {
+  clearErrors();
+  let valid = true;
+
+  if (activeTab.value === 'login') {
+    if (!loginInputs.username?.trim()) {
+      errors.login.username = true;
+      shakeField('username', 'login');
+      valid = false;
+    }
+    if (!loginInputs.password?.trim()) {
+      errors.login.password = true;
+      shakeField('password', 'login');
+      valid = false;
+    }
+    if (valid) {
+      // здесь ваша логика входа
+      alert('Вход успешен!');
+    }
+  } else {
+    // регистрация
+    if (!registerInputs.username?.trim()) {
+      errors.register.username = true;
+      shakeField('username', 'register');
+      valid = false;
+    }
+    if (!registerInputs.password?.trim()) {
+      errors.register.password = true;
+      shakeField('password', 'register');
+      valid = false;
+    }
+    if (!registerInputs.passwordConfirm?.trim()) {
+      errors.register.passwordConfirm = true;
+      shakeField('passwordConfirm', 'register');
+      valid = false;
+    }
+    if (valid) {
+      // здесь ваша логика регистрации
+      alert('Регистрация успешна!');
+    }
+  }
+}
+function navigate(){
+  router.push({path: '/authvk'})
+}
+>>>>>>> eaad6fb60c7dd647be5adafbc2c210caf386ac9f
 </script>
 
 <template>
