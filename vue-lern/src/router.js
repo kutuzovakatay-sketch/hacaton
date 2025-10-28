@@ -1,13 +1,13 @@
 import {createRouter, createWebHashHistory}  from 'vue-router';
-import start from "./start.vue";
-import login from "./login.vue";
 // import signup from "./signup.vue";
 // import enterCode from "./enterCode.vue";
 // import signup from "./signup.vue";
 // import authvk from "./authvk.vue";
-import interests from "./interests.vue";
-import myroutes from "./myroutes.vue";
-import newroute from "./newroute.vue";
+import start from "./module/start.vue";
+import login from "./legacy/login.vue";
+import interests from "./module/interests.vue";
+import myroutes from "./module/myroutes.vue";
+import newroute from "./module/newroute.vue";
 
 export default createRouter({
     history: createWebHashHistory(),
