@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import router from '../router.js'
+import router from './router'
 
 const interests = [
   'Памятники', 'Парки', 'Достопримечательности', 'Набережная',
@@ -36,10 +36,11 @@ function sendToServer(){
 </script>
 
 <template>
-  <div class="interests-page">
     <button class="back-button">
-      <img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" />
+      <a href="#/start"><img src="../assets/L Arrow Up Left.svg" alt="Назад" /></a>
     </button>
+  <div class="interests-page">
+
 
     <div class="header">
       <h2>Укажите интересы</h2>
@@ -70,15 +71,17 @@ function sendToServer(){
   align-items: center;
   padding: 3rem;
   height: 100vh;
-  background-color: #fff;
+  /* background-color: #fff; */
   position: relative;
   box-sizing: border-box;
+
 }
 
 .back-button {
   position: absolute;
   top: 1.2rem;
-  left: 1rem;
+  left: 35px; 
+
   background: none;
   border: none;
   font-size: 20px;

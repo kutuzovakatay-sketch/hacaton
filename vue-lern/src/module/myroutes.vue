@@ -1,5 +1,5 @@
 <script setup>
-import router from '../router.js'
+import router from './router'
 
 function navigate(){
   router.push({path: '/newroute'})
@@ -19,7 +19,7 @@ function navigate(){
       <p class="empty-text">Тут пока пусто...</p>
   
       <button class="plus-button" @click="navigate()">
-        <img src="../../public/assets/plus%20button.svg" alt="Добавить маршрут"/>
+        <img src="../../public/assets/plus button.svg" alt="Добавить маршрут"/>
       </button>
     </div>
   </template>
