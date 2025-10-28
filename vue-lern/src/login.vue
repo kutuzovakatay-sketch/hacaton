@@ -1,7 +1,6 @@
 <script setup>
 
-<<<<<<< HEAD
-=======
+
 // const activeTab = ref('login')
 
 // function switchTab(tab) {
@@ -94,7 +93,7 @@ function validateAndSubmit() {
 function navigate(){
   router.push({path: '/authvk'})
 }
->>>>>>> eaad6fb60c7dd647be5adafbc2c210caf386ac9f
+
 </script>
 
 <template>

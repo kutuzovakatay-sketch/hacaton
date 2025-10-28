@@ -7,11 +7,20 @@ function navigate(){
 </script>
 
 <template>
+    <div class="nav">
+      <button class="back-button">
+        <a href="#/interests"><img src="../assets/L Arrow Up Left.svg" alt="Назад" /></a>
+      </button>
+      <!-- <div class="nav-info">
+        <button class="user-style"><img src="/img/user.png" alt=""></button>
+        <button class="user-style"><img src="/img/star.png" alt=""></button>
+        <button class="user-style"><img src="/img/tema.png" alt=""></button>
+      </div> -->
+    </div>
+
     <div class="route-page">
+      
       <div class="header">
-        <button class="back-button">
-          <img src="../assets/L Arrow Up Left.svg" alt="Назад" />
-        </button>
         <h1 class="title">Мои маршруты</h1>
       </div>
   
@@ -31,9 +40,35 @@ function navigate(){
     align-items: center;
     height: 100vh;
     padding: 2rem;
-    background-color: #fff;
     position: relative;
     box-sizing: border-box;
+  }
+
+  .nav{
+    width: 100px;
+    display: flex;
+    justify-content: space-between;
+
+  }
+  .user-style{
+    position: absolute;
+  }
+  .nav-info img{
+    width: 28px;
+    height: 28px;
+    
+
+    cursor: pointer;
+  }
+  .nav-info button{
+    border: none;
+  }
+  .nav-info{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+
+
   }
   
   .header {
@@ -50,12 +85,16 @@ function navigate(){
     background: none;
     border: none;
     cursor: pointer;
+    top: 1.2rem;
+    left: 35px; 
+    position: absolute;
   }
   
   .title {
     font-size: 20px;
     font-weight: 500;
-    margin: 0;
+    margin-top: 22px;
+
   }
   
   .img-empty {

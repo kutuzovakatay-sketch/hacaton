@@ -24,7 +24,7 @@ export default {
     <div class="start-info">
         <p>Добро пожаловать!</p>
         <img src="/img/start.png" alt="">
-        <a href=""><div class="buttons">
+        <a href="#/interests"><div class="buttons">
             <div class="start-button">Войти</div>
             <img src="/img/vk.png" alt="" class="vk">
         </div></a>
