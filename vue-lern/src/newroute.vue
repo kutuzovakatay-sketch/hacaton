@@ -1,25 +1,46 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
+const router = useRouter();
 
-function getgeo(){
-    alert('Запрашиваем ваше метоположение!')
-}
-function sendToServer() {
-  router.push({ path: '/nextpage' })
+function getgeo() {
+  alert('Запрашиваем ваше местоположение!');
 }
 
-function goback(){
-    router.push({ path: '/myroutes' })
+// function sendToServer() {
+//   router.push({ path: '/nextpage' });
+// }
+
+function goback() {
+  router.push({ path: '/myroutes' });
+}
+
+const loading = ref(false);
+
+function startLoading() {
+  loading.value = true;
+  // sendToServer()
+
+  setTimeout(() => {
+    loading.value = false; // Убираем загрузку
+    router.push('/login'); // Переход на страницу логина
+  }, 2000);
+}
+
+function handleButtonClick() {
+  startLoading(); 
+  setTimeout(sendToServer, 2000); 
 }
 </script>
 
+
 <template>
-  <div class="new-route-page">
     <button class="back-button" @click="goback()">
       <img src="../assets/L Arrow Up Left.svg" alt="Назад" />
     </button>
+  <div class="new-route-page">
+
 
     <h1 class="title">
       Укажите свободное<br />
@@ -38,9 +59,24 @@ function goback(){
       </div>
 
       <button class="share-button" @click="getgeo()">Поделиться местоположением</button>
-      <button class="continue" @click="sendToServer">Вперёд</button>
+      <button class="continue" @click="handleButtonClick">Вперёд</button>
     </div>
   </div>
+
+        <!-- Загрузочный экран с анимацией -->
+  <transition name="fade">
+    <div v-if="loading" class="loader-screen">
+        <div class="spinner">
+            <div class="dot" v-for="n in 9" :key="n"></div>
+        </div>
+        <p class="loading-text">Генерируем маршрут...</p>
+    </div>
+  </transition>
+
+      <!-- Основной контент -->
+    <div v-if="!loading" class="main-content">
+      <router-view></router-view>
+    </div>
 </template>
 
 <style scoped>
@@ -50,15 +86,15 @@ function goback(){
     align-items: center;
     padding: 2rem;
     height: 100vh;
-    background-color: #fff;
+ 
     position: relative;
     box-sizing: border-box; 
   }
 
   .back-button {
     position: absolute;
-    top: 2rem;
-    left: 1.5rem;
+    top: 1.2rem;
+    left: 35px; 
     background: none;
     border: none;
     cursor: pointer; 
@@ -141,4 +177,135 @@ function goback(){
   .continue:hover {
     transform: scale(1.05);
   }
+
+
+
+
+
+
+
+  .loader-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 57px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.loading-text{
+    font-size: 20px;
+}
+
+.spinner {
+  position: relative;
+  width: 170px;
+  height: 170px;
+}
+
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background: #7ACF63;
+  animation: dotAnim 1.5s infinite ease-in-out;
+
+
+   /* transform: translate(-50%, -50%); */
+}
+
+.dot:nth-child(1) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(0deg));
+  left: calc(50% + 48.5% * cos(0deg));
+  margin-left: 0;
+  animation-delay: 0s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(2) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(40deg));
+  left: calc(50% + 48.5% * cos(40deg));
+  animation-delay: 0.1s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(3) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(80deg));
+  left: calc(50% + 48.5% * cos(80deg));
+  animation-delay: 0.2s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(4) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(120deg));
+  left: calc(50% + 48.5% * cos(120deg));
+  animation-delay: 0.3s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(5) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(160deg));
+  left: calc(50% + 48.5% * cos(160deg));
+  animation-delay: 0.4s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(6) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(200deg));
+  left: calc(50% + 48.5% * cos(200deg));
+  animation-delay: 0.5s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(7) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(240deg));
+  left: calc(50% + 48.5% * cos(240deg));
+  animation-delay: 0.6s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(8) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(280deg));
+  left: calc(50% + 48.5% * cos(280deg));
+  animation-delay: 0.7s;
+  transform: translate(-50%, -50%);
+}
+
+.dot:nth-child(9) {
+  width: 30px; height: 30px;
+  top: calc(50% + 48.5% * sin(320deg));
+  left: calc(50% + 48.5% * cos(320deg));
+  animation-delay: 0.8s;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes dotAnim {
+  0%, 100% {
+    transform: scale(0.5);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style>
