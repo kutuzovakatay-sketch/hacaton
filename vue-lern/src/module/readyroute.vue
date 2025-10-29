@@ -1,6 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-const selectedTransport = ref('Пешком')
+const selectedTransport = ref('walking')
+
+//
+// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Взаимодействие с приложением карт на телефоне пользователя
+//
+function openmap(){
+  alert('Открываем карту на телефоне!') // Логика работы сервера
+}
 </script>
 
 <template>
@@ -17,10 +24,10 @@ const selectedTransport = ref('Пешком')
       <div class="list">
         <div class="dropdown">
           <select v-model="selectedTransport" class="select">
-            <option value="Пешком">Пешком</option>
-            <option value="Велосипед">Велосипед</option>
-            <option value="Транспорт">Транспорт</option>
-            <option value="Машина">Машина</option>
+            <option value="walking">Пешком</option>
+            <option value="bicycle">Велосипед</option>
+            <option value="public_transport">Транспорт</option>
+            <option value="car">Машина</option>
           </select>
         </div>
       </div>
@@ -49,10 +56,10 @@ const selectedTransport = ref('Пешком')
     </div>
   </div>
   <div class="button-inf">
-    <div class="button">
-      <img src="/assets/cart.png" alt="">
+    <button class="button" @click="openmap()">
       Перейти
-    </div>
+      <img src="/assets/cart.png" alt="">
+    </button>
   </div>
 </template>
 
@@ -78,6 +85,12 @@ const selectedTransport = ref('Пешком')
     background-position: right 10px center;
     background-size: 10px 6px;
   }
+  option {
+    background-color: #7ACF63;
+    opacity: 0.45;
+    color: black;           
+  }
+
 
   .select:focus {
     outline: none;
