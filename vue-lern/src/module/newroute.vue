@@ -176,12 +176,6 @@ function handleButtonClick() {
     transform: scale(1.05);
   }
 
-
-
-
-
-
-
   .loader-screen {
   display: flex;
   flex-direction: column;
@@ -213,9 +207,6 @@ function handleButtonClick() {
   border-radius: 50%;
   background: #7ACF63;
   animation: dotAnim 1.5s infinite ease-in-out;
-
-
-   /* transform: translate(-50%, -50%); */
 }
 
 .dot:nth-child(1) {
