@@ -1,10 +1,12 @@
 <script setup>
 import router from './router'
 
-// Авторизация с помощью VK
+//
+// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Авторизация с помощью VK
+//
 function auth() {
-  alert('Перенаправляем вас в VK ID')
-  router.push({ path: '/interests' })
+  alert('Перенаправляем вас в VK ID') // Логика работы сервера
+  router.push({ path: '/interests' }) // Перенаправление на следующую страницу
 }
 </script>
 
