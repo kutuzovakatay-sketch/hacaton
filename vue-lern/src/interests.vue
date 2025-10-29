@@ -27,7 +27,7 @@ function toggleInterest(interest) {
 function sendToServer(){
 
   if(selected.value.length == 0){
-    alert('Вы не выбрали ваши интересы!')
+    alert('Вы не выбрали ваши интересы!') // Уведомление для пользователя(оставить)
   } else {
     alert('Запрос был отправлен на Сервер!') // Логика работы сервера
     router.push({path: '/myroutes'}) // Перенаправление на следующую страницу
