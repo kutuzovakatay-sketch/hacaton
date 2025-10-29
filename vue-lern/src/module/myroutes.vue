@@ -7,11 +7,12 @@ function navigate(){
 </script>
 
 <template>
+    <button class="back-button">
+      <a href="#/interests"><img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" /></a>
+    </button>
     <div class="route-page">
       <div class="header">
-        <button class="back-button">
-          <img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" />
-        </button>
+
         <h1 class="title">Мои маршруты</h1>
       </div>
   
@@ -47,9 +48,14 @@ function navigate(){
   }
   
   .back-button {
-    background: none;
-    border: none;
-    cursor: pointer;
+  position: absolute;
+  top: 1.2rem;
+  left: 35px; 
+
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
   }
   
   .title {

@@ -38,7 +38,7 @@ function sendToServer(){
 
 <template>
     <button class="back-button">
-      <a href="#/start"><img src="../assets/L Arrow Up Left.svg" alt="Назад" /></a>
+      <a href="#/start"><img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" /></a>
     </button>
   <div class="interests-page">
 
