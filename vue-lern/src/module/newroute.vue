@@ -48,7 +48,7 @@ function handleButtonClick() {
     <div class="inputs">
       <div class="field">
         <p>Свободное время (в часах)</p>
-        <input type="text" class="style-input" placeholder="Введите время..." />
+        <input type="number" class="style-input" placeholder="Введите время..." min="0" step="0.5"/>
       </div>
 
       <div class="field">
