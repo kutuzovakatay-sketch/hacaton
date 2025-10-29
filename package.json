@@ -7,9 +7,9 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "scripts": {
-    "dev": "./node_modules/.bin/vite",
-    "build": "./node_modules/.bin/vite build",
-    "preview": "./node_modules/.bin/vite preview"
+    "dev": "vite",
+    "build": "build",
+    "preview": "preview"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
