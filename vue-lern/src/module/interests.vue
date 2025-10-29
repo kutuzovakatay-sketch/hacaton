@@ -1,7 +1,7 @@
 <script setup>
 import auth from "@/api/auth.js";
-import router from './../router'
 import { ref, onMounted } from 'vue'
+import router from './../router'
 
 const interests = [
   'Памятники', 'Парки', 'Достопримечательности', 'Набережная',
@@ -17,6 +17,7 @@ onMounted(async () => {
     router.push("/");
   }
 })
+
 
 function toggleInterest(interest) {
   const index = selected.value.indexOf(interest)
