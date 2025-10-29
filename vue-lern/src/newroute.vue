@@ -4,13 +4,12 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+//
+// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Обращение к службам геолокации за метсоположением пользователя
+//
 function getgeo() {
-  alert('Запрашиваем ваше местоположение!');
+  alert('Запрашиваем ваше местоположение!'); // Логика работы сервера
 }
-
-// function sendToServer() {
-//   router.push({ path: '/nextpage' });
-// }
 
 function goback() {
   router.push({ path: '/myroutes' });
@@ -20,11 +19,10 @@ const loading = ref(false);
 
 function startLoading() {
   loading.value = true;
-  // sendToServer()
 
   setTimeout(() => {
     loading.value = false; // Убираем загрузку
-    router.push('/login'); // Переход на страницу логина
+    router.push('/readyroute'); // Переход на страницу логина
   }, 2000);
 }
 
