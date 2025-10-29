@@ -1,5 +1,5 @@
 <script setup>
-import router from './router'
+import router from './../router'
 
 //
 // ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Авторизация с помощью VK
@@ -13,11 +13,11 @@ function auth() {
 <template>
   <div class="start-info">
     <p>Добро пожаловать!</p>
-    <img src="/img/start.png" alt="Начальное изображение" class="main-img" />
+    <img src="/assets/start.png" alt="Начальное изображение" class="main-img" />
 
     <button class="start-button" @click="auth()">
       Войти через VK
-      <img src="/img/vk.png" alt="VK" class="vk-icon" />
+      <img src="/assets/vk.png" alt="VK" class="vk-icon" />
     </button>
   </div>
 </template>

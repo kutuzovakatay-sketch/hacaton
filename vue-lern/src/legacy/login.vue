@@ -98,7 +98,7 @@
 
 <template>
       <button class="back-button">
-        <a href="#/newroute"><img src="../assets/L Arrow Up Left.svg" alt="Назад" /></a>
+        <a href="#/newroute"><img src="../../public/assets/L Arrow Up Left.svg" alt="Назад" /></a>
       </button>
   <div class="info">
     <div class="inf0-1">
@@ -138,7 +138,7 @@
   </div>
   <div class="button-inf">
     <div class="button">
-      <img src="/img/cart.png" alt="">
+      <img src="/assets/cart.png" alt="">
       Перейти
     </div>
   </div>

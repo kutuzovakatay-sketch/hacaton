@@ -1,12 +1,12 @@
 import {createRouter, createWebHashHistory}  from 'vue-router';
-import start from "./start.vue";
-import login from "./login.vue";
-import interests from "./interests.vue";
-import myroutes from "./myroutes.vue";
-import newroute from "./newroute.vue";
-import readyroute from "./readyroute.vue"
-// import signup from "./signup.vue";
-//import authvk from "./authvk.vue";
+import start from "./module/start.vue";
+// import login from "./legacy/login.vue";
+import interests from "./module/interests.vue";
+import myroutes from "./module/myroutes.vue";
+import newroute from "./module/newroute.vue";
+import readyroute from "./module/readyroute.vue"
+// import signup from "./module/signup.vue";
+// import authvk from "./legacy/authvk.vue";
 // import enterCode from "./enterCode.vue";
 
 
@@ -14,7 +14,7 @@ export default createRouter({
     history: createWebHashHistory(),
     routes: [
         { path: '/tourism', component: start, alias: '/' },
-        { path: '/login', component: login },
+        // { path: '/login', component: login },
         // { path: '/signup', component: signup },
         //{ path: '/authvk', component: authvk },
         { path: '/start', component: start},
