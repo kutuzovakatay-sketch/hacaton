@@ -26,7 +26,11 @@ function startLoading() {
   }, 2000);
 }
 
+//
+// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Отправка выбранного места и времени пользователем на сервер
+//
 function handleButtonClick() {
+  alert('Отправляем информацию!'); // Логика работы сервера
   startLoading(); 
   setTimeout(sendToServer, 2000); 
 }
