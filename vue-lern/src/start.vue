@@ -1,73 +1,71 @@
-<script>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+<script setup>
+import router from './router'
 
+// Авторизация с помощью VK
+function auth() {
+  alert('Перенаправляем вас в VK ID')
+  router.push({ path: '/interests' })
+}
 </script>
 
 <template>
-    <div class="start-info">
-        <p>Добро пожаловать!</p>
-        <img src="/img/start.png" alt="">
-        <a href="#/interests"><span class="buttons">
-          <div class="start-button">Войти</div>
-          <img src="/img/vk.png" alt="" class="vk">
-        </span></a>
+  <div class="start-info">
+    <p>Добро пожаловать!</p>
+    <img src="/img/start.png" alt="Начальное изображение" class="main-img" />
 
-    </div>
-
+    <button class="start-button" @click="auth()">
+      Войти через VK
+      <img src="/img/vk.png" alt="VK" class="vk-icon" />
+    </button>
+  </div>
 </template>
 
 <style scoped>
+.start-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 36px;
+  gap: 36px;
+  margin-top: 30px;
+}
 
-    .img{
-        height: 347px;
-        width: 374px;
-    }
-    p{
-        font-size: 20px;
-        font-weight: bold;
-    }
-    .buttons{
-        display: flex;
-        justify-content: center;
-        gap: 6px;
+p {
+  font-size: 20px;
+  font-weight: bold;
+}
 
-        background: #CDCDCD;
-        border-radius: 30px;
-        align-items: center;
-        cursor: pointer;
-        transition: transform 500ms ease;
-        width: 296px;
-        height: 52px;
-        font-size: 20px;
-        color: rgb(255, 255, 255);
-        background-color: #7ACF63;
-    }
-    .start-info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: 36px;
-        gap: 36px;
-        margin-top: 30px;
+.main-img {
+  height: 347px;
+  width: 374px;
+  object-fit: contain;
+}
 
-    }
+.start-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 
-    .buttons:hover{
-        transform: scale(1.1) translateY(-5px);
-    }
+  width: 296px;
+  height: 52px;
 
-    a {
-        text-decoration: none;
-    }
+  background-color: #7acf63;
+  border-radius: 30px;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  flex-direction: row;
+}
 
+.start-button:hover {
+  transform: scale(1.05) translateY(-3px);
+}
+
+.vk-icon {
+  width: 26px;
+  height: 26px;
+}
 </style>
-    
-
-
-
-
-
-
-
-
