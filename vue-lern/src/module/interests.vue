@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import auth from "@/api/auth.js";
 import router from './../router'
+import { ref, onMounted } from 'vue'
 
 const interests = [
   'Памятники', 'Парки', 'Достопримечательности', 'Набережная',
@@ -8,6 +9,14 @@ const interests = [
 ]
 
 const selected = ref([])
+
+// Проверка токена при загрузке страницы, добавить во все страницы, требующие авторизацию
+onMounted(async () => {
+  const token = localStorage.getItem('access_token');
+  if (!token || !(await auth.validateToken(token))) {
+    router.push("/");
+  }
+})
 
 function toggleInterest(interest) {
   const index = selected.value.indexOf(interest)
@@ -38,7 +47,7 @@ function sendToServer(){
 
 <template>
     <button class="back-button">
-      <a href="#/start"><img src="../assets/L Arrow Up Left.svg" alt="Назад" /></a>
+      <a href="#/start"><img src="/assets/L Arrow Up Left.svg" alt="Назад" /></a>
     </button>
   <div class="interests-page">
 

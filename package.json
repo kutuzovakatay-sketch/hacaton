@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "build",
-    "preview": "preview"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",

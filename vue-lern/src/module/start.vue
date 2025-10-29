@@ -1,13 +1,6 @@
 <script setup>
 import router from './../router'
-
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Авторизация с помощью VK
-//
-function auth() {
-  alert('Перенаправляем вас в VK ID') // Логика работы сервера
-  router.push({ path: '/interests' }) // Перенаправление на следующую страницу
-}
+import AuthService from './../api/auth.js'
 </script>
 
 <template>
@@ -15,7 +8,7 @@ function auth() {
     <p>Добро пожаловать!</p>
     <img src="/assets/start.png" alt="Начальное изображение" class="main-img" />
 
-    <button class="start-button" @click="auth()">
+    <button class="start-button" @click="AuthService.login()">
       Войти через VK
       <img src="/assets/vk.png" alt="VK" class="vk-icon" />
     </button>
