@@ -1,26 +1,34 @@
 <script setup>
-import auth from "@/api/auth.js";
+import AuthService from "@/api/auth.js";
+import UserService from "@/api/user.js";
 import { ref, onMounted } from 'vue'
 import router from './../router'
 
 const interests = [
-  'Памятники', 'Парки', 'Достопримечательности', 'Набережная',
-  'Здания', 'Культурные места', 'Музеи', 'Театры', 'Германия', 'Искусство'
+  { id: 1, name: 'Памятники' },
+  { id: 2, name: 'Парки' },
+  { id: 3, name: 'Достопримечательности' },
+  { id: 4, name: 'Набережная' },
+  { id: 5, name: 'Здания' },
+  { id: 6, name: 'Культурные места' },
+  { id: 7, name: 'Музеи' },
+  { id: 8, name: 'Театры' },
+  { id: 9, name: 'Германия' },
+  { id: 10, name: 'Искусство' }
 ]
 
 const selected = ref([])
 
 // Проверка токена при загрузке страницы, добавить во все страницы, требующие авторизацию
 onMounted(async () => {
-  const token = localStorage.getItem('access_token');
-  if (!token || !(await auth.validateToken(token))) {
+  if (!localStorage.getItem("access_token") || !(await AuthService.tokenIsValid())) {
     router.push("/");
   }
 })
 
 
 function toggleInterest(interest) {
-  const index = selected.value.indexOf(interest)
+  const index = selected.value.findIndex(item => item.id === interest.id)
 
   if (index !== -1) {
     selected.value.splice(index, 1)
@@ -31,18 +39,15 @@ function toggleInterest(interest) {
   }
 }
 
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Отправка выбранных интересов (хранятся в массиве selected в виде строк)
-//
-function sendToServer(){
-
-  if(selected.value.length == 0){
-    alert('Вы не выбрали ваши интересы!') // Уведомление для пользователя(оставить)
-  } else {
-    alert('Запрос был отправлен на Сервер!') // Логика работы сервера
-    router.push({path: '/myroutes'}) // Перенаправление на следующую страницу
+async function sendToServer() {
+  try {
+    const selectedIds = selected.value.map(interest => interest.id)
+    console.log(selectedIds)
+    await UserService.sendCategoriesToServer(selectedIds)
+    router.push('/myroutes')
+  } catch (error) {
+    alert(error.message)
   }
-  
 }
 </script>
 
@@ -61,11 +66,11 @@ function sendToServer(){
     <div class="interests-grid">
       <button
         v-for="interest in interests"
-        :key="interest"
-        :class="['interest', { active: selected.includes(interest) }]"
+        :key="interest.id"
+        :class="['interest', { active: selected.some(item => item.id === interest.id) }]"
         @click="toggleInterest(interest)"
       >
-        {{ interest }}
+        {{ interest.name }}
       </button>
     </div>
 
