@@ -18,7 +18,6 @@ onMounted(async () => {
   }
 })
 
-
 function toggleInterest(interest) {
   const index = selected.value.indexOf(interest)
 
