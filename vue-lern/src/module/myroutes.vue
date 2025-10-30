@@ -1,9 +1,52 @@
 <script setup>
+import auth from "@/api/auth.js";
+import {settings} from "@/api/env.js";
 import router from './../router'
 
 function navigate(){
   router.push({path: '/newroute'})
 }
+
+// Проверка токена при загрузке страницы, добавить во все страницы, требующие авторизацию
+onMounted(async () => {
+  const token = localStorage.getItem('access_token');
+  if (!token || !(await auth.validateToken(token))) {
+    router.push("/");
+  }
+
+  try {
+    const userResponse = await fetch(`${settings.API_BASE_URL}/auth/me`, {
+      mathod: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    if (!userResponse.ok) throw new Error('Не удалось получить данные пользователя')
+
+    const userData = await userResponse.json()
+    const userId = userData.id
+
+    const routesResponse = await fetch(`${settings.API_BASE_URL}/api/routes/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!routesResponse.ok) throw new Error('Не удалось получить маршруты пользователя')
+
+    const data = await routesResponse.json()
+    routesSummary.value = data
+    console.log('Маршруты пользователя:', data)
+  } catch (error) {
+    console.error('Ошибка при получении данных пользователя или маршрутов:', error)
+    router.push('/')
+  }
+}) 
+
+
 </script>
 
 <template>

@@ -26,7 +26,6 @@ onMounted(async () => {
   }
 })
 
-
 function toggleInterest(interest) {
   const index = selected.value.findIndex(item => item.id === interest.id)
 
