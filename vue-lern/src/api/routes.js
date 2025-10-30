@@ -30,6 +30,31 @@ class RouteService {
         return result.results.items[0].address_name;
     }
 
+    async getAddressSuggestions(query, location) {
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            throw new Error('Токен недействителен');
+        }
+
+        let locationParam = location ? '&location=' + encodeURIComponent(location) : '';
+
+        const response = await fetch(`${settings.API_BASE_URL}/routes/suggest?query=${encodeURIComponent(query)}${locationParam}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('Ошибка получения подсказок адресов:', errorData);
+            throw new Error(errorData?.detail || `Не удалось получить подсказки адресов - статус: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
 
     async createRouteTask(routeData) {
         const token = localStorage.getItem('access_token');

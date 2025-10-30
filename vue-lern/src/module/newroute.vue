@@ -150,6 +150,39 @@ function handleButtonClick() {
   startLoading();
 }
 
+
+// Автодополнение адреса
+const suggestions = ref([]);
+const showDropdown = ref(false);
+async function onAddressInput() {
+  if (address.value.length < 3) {
+    showDropdown.value = false;
+    return;
+  }
+
+  try {
+    let results;
+    if (latitude.value && longitude.value) {
+      results = await RouteService.getAddressSuggestions(address.value, `${latitude.value},${longitude.value}`);
+    } else {
+      results = await RouteService.getAddressSuggestions(address.value);
+    }
+
+    suggestions.value = results.locations;
+    showDropdown.value = true;
+  } catch (error) {
+    console.error('Ошибка при получении подсказок адреса:', error);
+  }
+}
+
+function selectSuggestion(suggestion) {
+  address.value = suggestion.name;
+  showDropdown.value = false;
+
+  //GET ROUTE COORDINATES FROM SELECTED ADDRESS
+  //await RouteService.getCoorinatesByAddress()
+}
+
 </script>
 
 
@@ -165,6 +198,22 @@ function handleButtonClick() {
     </h1>
 
     <div class="inputs">
+       <div class="field">
+         <p>Адрес</p>
+         <input type="text" @input="onAddressInput" v-model="address" class="style-input" placeholder="Введите адрес..." />
+         <div v-if="showDropdown" ref="dropdown" class="suggestions-dropdown">
+           <ul>
+             <li
+                 v-for="suggestion in suggestions"
+                 :key="suggestion.id"
+                 @click="selectSuggestion(suggestion)"
+             >
+               {{ suggestion.name }}
+             </li>
+           </ul>
+         </div>
+       </div>
+
       <div class="field">
         <p>Свободное время (в часах)</p>
         <input type="number" v-model="available_time_hours" class="style-input" placeholder="Введите время..." />
@@ -424,4 +473,46 @@ function handleButtonClick() {
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
+  .field {
+    position: relative; /* Добавлено для позиционирования дропдауна относительно поля */
+    width: 100%;
+  }
+
+  .suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #f7f7f7; /* Соответствует фону input */
+    border: 1.5px solid #ccc; /* Соответствует бордеру input */
+    border-top: none; /* Без верхней границы для seamless соединения */
+    border-radius: 0 0 10px 10px; /* Нижние углы как у input (верхние обрезаны) */
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1001; /* Выше loader-screen (1000) */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .suggestions-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .suggestions-dropdown li {
+    padding: 10px 14px; /* Соответствует padding input */
+    cursor: pointer;
+    font-size: 16px; /* Соответствует font-size input */
+    color: #333; /* Соответствует цвету текста */
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease; /* Плавный hover как у input */
+  }
+
+  .suggestions-dropdown li:hover {
+    background: #fff; /* Как при focus input */
+  }
+
+  .suggestions-dropdown li:last-child {
+    border-bottom: none;
+  }
 </style>
