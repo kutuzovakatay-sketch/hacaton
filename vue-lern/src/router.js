@@ -4,7 +4,7 @@ import start from "./module/start.vue";
 import interests from "./module/interests.vue";
 import myroutes from "./module/myroutes.vue";
 import newroute from "./module/newroute.vue";
-import readyroute from "./module/readyroute.vue"
+import readyroute from "./module/readyroute.vue";
 // import signup from "./module/signup.vue";
 // import authvk from "./legacy/authvk.vue";
 // import enterCode from "./enterCode.vue";

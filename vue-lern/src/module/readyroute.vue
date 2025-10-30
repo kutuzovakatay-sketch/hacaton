@@ -1,4 +1,13 @@
 <script setup>
+import { ref } from 'vue'
+const selectedTransport = ref('walking')
+
+//
+// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Взаимодействие с приложением карт на телефоне пользователя
+//
+function openmap(){
+  alert('Открываем карту на телефоне!') // Логика работы сервера
+}
 </script>
 
 <template>
@@ -14,20 +23,12 @@
       </span>
       <div class="list">
         <div class="dropdown">
-          <button class="var btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Пешком
-          </button>
-          <ul class="dropdown-menu">
-            <li>
-              <button class="dropdown-item" type="button">Транспорт</button>
-            </li>
-            <li>
-              <button class="dropdown-item" type="button">Велосипед</button>
-            </li>
-            <li>
-              <button class="dropdown-item" type="button">Машина</button>
-            </li>
-          </ul>
+          <select v-model="selectedTransport" class="select">
+            <option value="walking">Пешком</option>
+            <option value="bicycle">Велосипед</option>
+            <option value="public_transport">Транспорт</option>
+            <option value="car">Машина</option>
+          </select>
         </div>
       </div>
     </div>
@@ -55,10 +56,10 @@
     </div>
   </div>
   <div class="button-inf">
-    <div class="button">
-      <img src="/assets/cart.png" alt="">
+    <button class="button" @click="openmap()">
       Перейти
-    </div>
+      <img src="/assets/cart.png" alt="">
+    </button>
   </div>
 </template>
 
@@ -69,10 +70,31 @@
     padding: 5px;
     border-radius: 20px;
   }
+  .select {
+    background-color: #7ACF63;
+    color: black;
+    border: none;
+    border-radius: 45px;
+    padding: 8px 25px;
+    font-size: 14px;
+    appearance: none;
+    cursor: pointer;
+    text-align: center;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path fill='black' d='M0 0l5 6 5-6z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 6px;
+  }
+  option {
+    background-color: #7ACF63;
+    opacity: 0.45;
+    color: black;           
+  }
 
-  .dropdown-menu {
-    min-width: 95px !important;
-    background-color: #ffffff;
+
+  .select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(122, 207, 99, 0.4);
   }
 
   .title {
