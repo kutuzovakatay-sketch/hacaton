@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AuthService from "@/api/auth.js";
 import RouteService from "@/api/routes.js";
@@ -105,6 +105,11 @@ async function startLoading() {
 
   const eventSource = new EventSource(`${settings.API_BASE_URL}/routes/events/${task_id}`);
 
+    eventSource.addEventListener('connected', (e) => {
+      console.log("connected event:", e.data);
+      progressText.value = 'Соединение с сервером установлено...';
+    });
+
     eventSource.addEventListener('processing', (e) => {
       console.log("processing event:", e.data);
       progressText.value = 'Обработка запроса...';
@@ -203,18 +208,18 @@ function handleButtonClick() {
     align-items: center;
     padding: 2rem;
     height: 100vh;
- 
+
     position: relative;
-    box-sizing: border-box; 
+    box-sizing: border-box;
   }
 
   .back-button {
     position: absolute;
     top: 1.2rem;
-    left: 35px; 
+    left: 35px;
     background: none;
     border: none;
-    cursor: pointer; 
+    cursor: pointer;
   }
 
   .title {
