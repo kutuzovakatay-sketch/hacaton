@@ -17,7 +17,10 @@ const interests = [
   { id: 10, name: 'Искусство' }
 ]
 
-const selected = ref([])
+//
+// !!! Запрос выбранных интересов пользователя с сервера
+//
+let selected = ref(await UserService.getUserCategories())
 
 // Проверка токена при загрузке страницы, добавить во все страницы, требующие авторизацию
 onMounted(async () => {

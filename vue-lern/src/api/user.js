@@ -65,6 +65,50 @@ class UserService {
 
         return response;
     }
+
+    async getUserCategories() {
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            router.push('/');
+            throw new Error('Токен недействителен');
+        }
+
+        const response = await fetch(settings.API_BASE_URL + '/user/categories', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.detail || `Не удалось получить интересы пользователя - статус: ${response.status}`);
+        }
+        return await response.json();
+    }
+
+    async getUserRoutes() {
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            router.push('/');
+            throw new Error('Токен недействителен');
+        }
+
+        const response = await fetch(settings.API_BASE_URL + '/user/routes', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(errorData?.detail || `Не удалось получить маршруты пользователя - статус: ${response.status}`);
+        }
+        return await response.json();
+    }
 }
 
 export default new UserService();
