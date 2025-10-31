@@ -92,10 +92,8 @@ async function sendToServer() {
   align-items: center;
   padding: 3rem;
   height: 100vh;
-  /* background-color: #fff; */
   position: relative;
   box-sizing: border-box;
-
 }
 
 .back-button {
