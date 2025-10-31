@@ -178,12 +178,15 @@ async function onAddressInput() {
   }
 }
 
-function selectSuggestion(suggestion) {
+async function selectSuggestion(suggestion) {
   address.value = suggestion.name;
   showDropdown.value = false;
 
-  //GET ROUTE COORDINATES FROM SELECTED ADDRESS
-  //await RouteService.getCoorinatesByAddress(suggestion.name)
+
+  const result = await RouteService.getCoordinatesByAddress(suggestion.name);
+
+  latitude.value = result.lat;
+  longitude.value = result.lon;
 }
 
 </script>

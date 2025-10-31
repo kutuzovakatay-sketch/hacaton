@@ -56,6 +56,30 @@ class RouteService {
     }
 
     async getCoordinatesByAddress(address) {
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            throw new Error('Токен недействителен');
+        }
+
+        const response = await fetch(`${settings.API_BASE_URL}/routes/geocode?q=${address}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('Ошибка получения адреса:', errorData);
+            throw new Error(errorData?.detail || `Не удалось получить адрес - статус: ${response.status}`);
+        }
+
+        const result = await response.json()
+
+        console.log(result)
+
+        return result;
 
     }
 
