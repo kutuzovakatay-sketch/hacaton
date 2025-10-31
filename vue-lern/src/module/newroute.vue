@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AuthService from "@/api/auth.js";
+import UserService from "@/api/user.js";
 import RouteService from "@/api/routes.js";
 import {settings} from "@/api/settings.js";
 
@@ -86,7 +87,7 @@ async function startLoading() {
 
   loading.value = true;
 
-  const userData = await AuthService.getUserData();
+  const userData = await UserService.getUserData();
 
   let routeData = {
     user_id: userData.id,
@@ -107,17 +108,17 @@ async function startLoading() {
 
     eventSource.addEventListener('connected', (e) => {
       console.log("connected event:", e.data);
-      progressText.value = 'Соединение с сервером установлено...';
+      progressText.value = 'Обработка запроса...';
     });
 
     eventSource.addEventListener('processing', (e) => {
       console.log("processing event:", e.data);
-      progressText.value = 'Обработка запроса...';
+      progressText.value = 'Передача данных в AI...';
     });
 
     eventSource.addEventListener('ai_response', (e) => {
       console.log("ai_response event:", e.data);
-      progressText.value = 'Получение данных от AI...';
+      progressText.value = 'Получены данные от AI...';
     });
 
     eventSource.addEventListener('route_building', (e) => {
@@ -126,11 +127,13 @@ async function startLoading() {
 
 
     eventSource.addEventListener('completed', (e) => {
-    eventSource.close();
-    setTimeout(() => {
-      loading.value = false;
-      router.push('/readyroute');
-    }, 2000);
+      console.log("completed event:", e.data);
+      progressText.value = 'Маршрут готов!';
+      eventSource.close();
+      setTimeout(() => {
+        loading.value = false;
+        router.push({path: '/readyroute', query: {id: JSON.parse(e.data).route.route_id}});
+      }, 2000);
   });
 
   eventSource.addEventListener('error', (e) => {
@@ -180,7 +183,7 @@ function selectSuggestion(suggestion) {
   showDropdown.value = false;
 
   //GET ROUTE COORDINATES FROM SELECTED ADDRESS
-  //await RouteService.getCoorinatesByAddress()
+  //await RouteService.getCoorinatesByAddress(suggestion.name)
 }
 
 </script>
@@ -208,7 +211,7 @@ function selectSuggestion(suggestion) {
                  :key="suggestion.id"
                  @click="selectSuggestion(suggestion)"
              >
-               {{ suggestion.name }}
+               {{ suggestion.suggested }}
              </li>
            </ul>
          </div>

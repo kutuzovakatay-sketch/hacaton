@@ -66,6 +66,30 @@ class UserService {
         return response;
     }
 
+    async getUserData() {
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            router.push('/');
+            throw new Error('Токен недействителен');
+        }
+
+        const response = await fetch(settings.API_BASE_URL + '/user/me', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('Ошибка получения информации о пользователе:', errorData);
+            throw new Error(errorData?.detail || `Не удалось получить информацию о пользователе - статус: ${response.status}`);
+        }
+
+        return response.json();
+    }
+
     async getUserCategories() {
         const token = localStorage.getItem('access_token');
         if (!token || !(await AuthService.tokenIsValid())) {
@@ -109,6 +133,7 @@ class UserService {
         }
         return await response.json();
     }
+
 }
 
 export default new UserService();

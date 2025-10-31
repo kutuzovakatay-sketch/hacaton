@@ -55,6 +55,9 @@ class RouteService {
         return await response.json();
     }
 
+    async getCoordinatesByAddress(address) {
+
+    }
 
     async createRouteTask(routeData) {
         const token = localStorage.getItem('access_token');
@@ -80,29 +83,27 @@ class RouteService {
         return await response.json();
     }
 
-    async getUserRoutes(){
+    async getRouteById(routeId) {
         const token = localStorage.getItem('access_token');
         if (!token || !(await AuthService.tokenIsValid())) {
             throw new Error('Токен недействителен');
         }
 
-        const routesResponse = await fetch(`${settings.API_BASE_URL}/api/routes/user/${userId}`, {
+        const response = await fetch(`${settings.API_BASE_URL}/user/routes/${routeId}`, {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             }
-          });
-      
-          if (!routesResponse.ok){
-            const errorData = await response.json().catch(() => null);
-            console.error('Ошибка в получении истории маршрутов пользователя:', errorData);
-            throw new Error('Не удалось получить маршруты пользователя')
-          } 
-      
+        });
 
-          const data = await routesResponse.json()
-          return data;
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            console.error('Ошибка получения маршрута:', errorData);
+            throw new Error(errorData?.detail || `Не удалось получить маршрут - статус: ${response.status}`);
+        }
+
+        return await response.json();
     }
 }
 

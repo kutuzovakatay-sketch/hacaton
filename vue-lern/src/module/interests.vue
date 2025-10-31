@@ -17,17 +17,20 @@ const interests = [
   { id: 10, name: 'Искусство' }
 ]
 
-//
-// !!! Запрос выбранных интересов пользователя с сервера
-//
-let selected = ref(await UserService.getUserCategories())
+let selected = ref([])
+UserService.getUserCategories().then(categories => {
+  selected.value = categories
+  console.log('Загруженные интересы пользователя:', selected.value)
+}).catch(error => {
+  console.error('Ошибка при загрузке интересов пользователя:', error)
+})
 
-// Проверка токена при загрузке страницы, добавить во все страницы, требующие авторизацию
 onMounted(async () => {
   if (!localStorage.getItem("access_token") || !(await AuthService.tokenIsValid())) {
     router.push("/");
   }
 })
+
 
 function toggleInterest(interest) {
   const index = selected.value.findIndex(item => item.id === interest.id)

@@ -43,30 +43,6 @@ class AuthService {
         const token = localStorage.getItem('access_token');
         return !(!token || !(await this.validateToken(token)));
     }
-
-    async getUserData() {
-        const token = localStorage.getItem('access_token');
-        if (!token || !(await this.validateToken(token))) {
-            router.push('/');
-            throw new Error('Токен недействителен');
-        }
-
-        const response = await fetch(settings.API_BASE_URL + '/auth/me', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => null);
-            console.error('Ошибка получения информации о пользователе:', errorData);
-            throw new Error(errorData?.detail || `Не удалось получить информацию о пользователе - статус: ${response.status}`);
-        }
-
-        return response.json();
-    }
 }
 
 export default new AuthService();

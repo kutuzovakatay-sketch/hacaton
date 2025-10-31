@@ -1,61 +1,119 @@
 <script setup>
-import { ref } from 'vue'
-const selectedTransport = ref('walking')
+import { ref, onMounted, computed } from 'vue'
+import { useRoute } from 'vue-router'
+import RouteService from '@/api/routes.js'
+import AuthService from '@/api/auth.js'
+import router from '@/router.js'
 
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Взаимодействие с приложением карт на телефоне пользователя
-//
+const route = useRoute()
+const routeData = ref(null)
+const isLoading = ref(true)
+const error = ref(null)
+
+const transportTypeDisplay = computed(() => {
+  if (!routeData.value) return 'Пешком'
+
+  const types = {
+    'walking': 'Пешком',
+    'bicycle': 'Велосипед',
+    'public_transport': 'Транспорт',
+    'car': 'Машина'
+  }
+
+  return types[routeData.value.transport_type] || 'Пешком'
+})
+
+const formattedTime = computed(() => {
+  if (!routeData.value) return '0 мин'
+  const hours = Math.floor(routeData.value.estimated_time_minutes / 60)
+  const minutes = routeData.value.estimated_time_minutes % 60
+
+  if (hours > 0) {
+    return `${hours}ч ${minutes}мин`
+  }
+  return `${minutes}мин`
+})
+
+onMounted(async () => {
+  if (!localStorage.getItem("access_token") || !(await AuthService.tokenIsValid())) {
+    router.push("/");
+    return;
+  }
+
+  const routeId = route.query.id
+
+  if (!routeId) {
+    error.value = 'ID маршрута не указан'
+    isLoading.value = false
+    return
+  }
+
+  try {
+    isLoading.value = true
+    routeData.value = await RouteService.getRouteById(routeId)
+    console.log('Загружен маршрут:', routeData.value)
+  } catch (err) {
+    console.error('Ошибка при загрузке маршрута:', err)
+    error.value = err.message || 'Не удалось загрузить маршрут'
+  } finally {
+    isLoading.value = false
+  }
+})
+
 function openmap(){
-  alert('Открываем карту на телефоне!') // Логика работы сервера
+  alert('Открываем карту на телефоне!') // TODO реализовать открытие карты @kurays
 }
 </script>
 
 <template>
-  <button class="back-button">
-    <a href="#/newroute">
-      <img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" />
-    </a>
+  <button class="back-button" @click="router.push('/myroutes')">
+    <img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" />
   </button>
-  <div class="info">
+
+  <!-- Состояние загрузки -->
+  <div v-if="isLoading" class="loading">
+    <p>Загрузка маршрута...</p>
+  </div>
+
+  <!-- Состояние ошибки -->
+  <div v-else-if="error" class="error-state">
+    <p>{{ error }}</p>
+    <button class="button" @click="router.push('/myroutes')">Вернуться к маршрутам</button>
+  </div>
+
+  <!-- Основной контент -->
+  <div v-else-if="routeData" class="info">
     <div class="inf0-1">
-      <span>
-        <p>Памятники</p>
+      <span class="route-title">
+        Маршрут #{{ routeData.id }}
       </span>
       <div class="list">
-        <div class="dropdown">
-          <select v-model="selectedTransport" class="select">
-            <option value="walking">Пешком</option>
-            <option value="bicycle">Велосипед</option>
-            <option value="public_transport">Транспорт</option>
-            <option value="car">Машина</option>
-          </select>
+        <div class="transport-display">
+          <div class="var">
+            {{ transportTypeDisplay }}
+          </div>
         </div>
       </div>
     </div>
     <div class="km">
-      <p>1,2км от 11мин</p>
+      <p>{{ routeData.total_distance }}км от {{ formattedTime }}</p>
     </div>
-    <div class="opicanie">
-      <p>
-        Начните прогулку у Оленя — современного символа возрождения Нижнего Новгорода. Отсюда рукой подать до монументального Петра I, чей взгляд устремлен к Волге. Завершите маршрут у стен древнего Кремля, где установлена копия московского памятника Минину и Пожарскому.
-      </p>
+    <div class="opicanie" v-if="routeData.ai_description">
+      <p>{{ routeData.ai_description }}</p>
     </div>
     <div class="content">
-      <div class="content-info">
-        <p class="title">Олень</p>
-        <p class="opicanie-item">историческая территория Старый Нижний Новгород</p>
-      </div>
-      <div class="content-info">
-        <p class="title">Петр1</p>
-        <p class="opicanie-item">Нижневоджская набережная</p>
-      </div>
-      <div class="content-info">
-        <p class="title">Минину и Пожарскому</p>
-        <p class="opicanie-item">ул. Рождественская</p>
+      <div
+        v-for="location in routeData.locations"
+        :key="location.id"
+        class="content-info"
+      >
+        <p class="title">{{ location.title }}</p>
+        <p class="addres-item">{{ location.address }}</p>
+        <p class="description-item" v-if="location.description">{{ location.description }}</p>
       </div>
     </div>
   </div>
-  <div class="button-inf">
+  <div v-if="routeData" class="button-inf">
     <button class="button" @click="openmap()">
       Перейти
       <img src="/assets/cart.png" alt="">
@@ -64,46 +122,45 @@ function openmap(){
 </template>
 
 <style scoped>
+  .loading, .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .loading p {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .error-state p {
+    font-size: 16px;
+    color: #d9534f;
+    margin-bottom: 1rem;
+  }
+
+  .transport-display {
+    display: flex;
+    align-items: center;
+  }
+
   .info {
     margin: 43px 40px 20px 41px;
-    box-shadow: 0px 4px 4px #0000001A;
+    box-shadow: 0 4px 4px #0000001A;
     padding: 5px;
     border-radius: 20px;
-  }
-  .select {
-    background-color: #7ACF63;
-    color: black;
-    border: none;
-    border-radius: 45px;
-    padding: 8px 25px;
-    font-size: 14px;
-    appearance: none;
-    cursor: pointer;
-    text-align: center;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path fill='black' d='M0 0l5 6 5-6z'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 10px 6px;
-  }
-  option {
-    background-color: #7ACF63;
-    opacity: 0.45;
-    color: black;           
-  }
-
-
-  .select:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(122, 207, 99, 0.4);
   }
 
   .title {
     font-weight: bold;
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
 
   .var {
-    background-color: #7ACF63;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -114,9 +171,14 @@ function openmap(){
     padding-left: 10px;
   }
 
-  .opicanie-item {
+  .addres-item {
     margin-top: 2px;
-    padding-bottom: 69px;
+    padding-bottom: 10px;
+  }
+
+  .description-item {
+    margin-top: 2px;
+    padding-bottom: 10px;
   }
 
   .back-button {
@@ -128,11 +190,8 @@ function openmap(){
     position: absolute;
   }
 
-  span {
+  .route-title {
     font-weight: bold;
-  }
-
-  span p {
     font-size: 16px;
   }
 
