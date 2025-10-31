@@ -54,6 +54,31 @@ class RouteService {
 
         return await response.json();
     }
+
+    async getUserRoutes(){
+        const token = localStorage.getItem('access_token');
+        if (!token || !(await AuthService.tokenIsValid())) {
+            throw new Error('Токен недействителен');
+        }
+
+        const routesResponse = await fetch(`${settings.API_BASE_URL}/api/routes/user/${userId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+      
+          if (!routesResponse.ok){
+            const errorData = await response.json().catch(() => null);
+            console.error('Ошибка в получении истории маршрутов пользователя:', errorData);
+            throw new Error('Не удалось получить маршруты пользователя')
+          } 
+      
+
+          const data = await routesResponse.json()
+          return data;
+    }
 }
 
 export default new RouteService();
