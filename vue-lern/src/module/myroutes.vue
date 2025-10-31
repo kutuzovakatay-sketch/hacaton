@@ -1,5 +1,6 @@
 <script setup>
 import auth from "@/api/auth.js";
+import routes from "@/api/routes.js";
 import {settings} from "@/api/env.js";
 import router from './../router'
 
@@ -15,31 +16,16 @@ onMounted(async () => {
   }
 
   try {
-    const userResponse = await fetch(`${settings.API_BASE_URL}/auth/me`, {
-      mathod: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-    if (!userResponse.ok) throw new Error('Не удалось получить данные пользователя')
 
-    const userData = await userResponse.json()
-    const userId = userData.id
+    const userData = await auth.getUserData();
+    const userId = userData.id;
 
-    const routesResponse = await fetch(`${settings.API_BASE_URL}/api/routes/user/${userId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!routesResponse.ok) throw new Error('Не удалось получить маршруты пользователя')
+    const routesResponse = routes.getUserRoutes();
 
     const data = await routesResponse.json()
     routesSummary.value = data
     console.log('Маршруты пользователя:', data)
+    
   } catch (error) {
     console.error('Ошибка при получении данных пользователя или маршрутов:', error)
     router.push('/')
