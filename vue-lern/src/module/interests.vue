@@ -1,16 +1,39 @@
 <script setup>
-import { ref } from 'vue'
+import AuthService from "@/api/auth.js";
+import UserService from "@/api/user.js";
+import { ref, onMounted } from 'vue'
 import router from './../router'
 
 const interests = [
-  'Памятники', 'Парки', 'Достопримечательности', 'Набережная',
-  'Здания', 'Культурные места', 'Музеи', 'Театры', 'Германия', 'Искусство'
+  { id: 1, name: 'Памятники' },
+  { id: 2, name: 'Парки' },
+  { id: 3, name: 'Достопримечательности' },
+  { id: 4, name: 'Набережная' },
+  { id: 5, name: 'Здания' },
+  { id: 6, name: 'Культурные места' },
+  { id: 7, name: 'Музеи' },
+  { id: 8, name: 'Театры' },
+  { id: 9, name: 'Германия' },
+  { id: 10, name: 'Искусство' }
 ]
 
-const selected = ref([])
+let selected = ref([])
+UserService.getUserCategories().then(categories => {
+  selected.value = categories
+  console.log('Загруженные интересы пользователя:', selected.value)
+}).catch(error => {
+  console.error('Ошибка при загрузке интересов пользователя:', error)
+})
+
+onMounted(async () => {
+  if (!localStorage.getItem("access_token") || !(await AuthService.tokenIsValid())) {
+    router.push("/");
+  }
+})
+
 
 function toggleInterest(interest) {
-  const index = selected.value.indexOf(interest)
+  const index = selected.value.findIndex(item => item.id === interest.id)
 
   if (index !== -1) {
     selected.value.splice(index, 1)
@@ -21,24 +44,21 @@ function toggleInterest(interest) {
   }
 }
 
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Отправка выбранных интересов (хранятся в массиве selected в виде строк)
-//
-function sendToServer(){
-
-  if(selected.value.length == 0){
-    alert('Вы не выбрали ваши интересы!') // Уведомление для пользователя(оставить)
-  } else {
-    alert('Запрос был отправлен на Сервер!') // Логика работы сервера
-    router.push({path: '/myroutes'}) // Перенаправление на следующую страницу
+async function sendToServer() {
+  try {
+    const selectedIds = selected.value.map(interest => interest.id)
+    console.log(selectedIds)
+    await UserService.sendCategoriesToServer(selectedIds)
+    router.push('/myroutes')
+  } catch (error) {
+    alert(error.message)
   }
-  
 }
 </script>
 
 <template>
     <button class="back-button">
-      <a href="#/start"><img src="../../public/assets/L%20Arrow%20Up%20Left.svg" alt="Назад" /></a>
+      <a href="#/start"><img src="/assets/L Arrow Up Left.svg" alt="Назад" /></a>
     </button>
   <div class="interests-page">
 
@@ -51,11 +71,11 @@ function sendToServer(){
     <div class="interests-grid">
       <button
         v-for="interest in interests"
-        :key="interest"
-        :class="['interest', { active: selected.includes(interest) }]"
+        :key="interest.id"
+        :class="['interest', { active: selected.some(item => item.id === interest.id) }]"
         @click="toggleInterest(interest)"
       >
-        {{ interest }}
+        {{ interest.name }}
       </button>
     </div>
 
@@ -72,10 +92,8 @@ function sendToServer(){
   align-items: center;
   padding: 3rem;
   height: 100vh;
-  /* background-color: #fff; */
   position: relative;
   box-sizing: border-box;
-
 }
 
 .back-button {

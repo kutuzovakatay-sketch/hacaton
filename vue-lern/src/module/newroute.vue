@@ -1,39 +1,194 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import AuthService from "@/api/auth.js";
+import UserService from "@/api/user.js";
+import RouteService from "@/api/routes.js";
+import {settings} from "@/api/settings.js";
 
 const router = useRouter();
 
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Обращение к службам геолокации за метсоположением пользователя
-//
-function getgeo() {
-  alert('Запрашиваем ваше местоположение!'); // Логика работы сервера
+onMounted(async () => {
+  if (!localStorage.getItem("access_token") || !(await AuthService.tokenIsValid())) {
+    router.push("/");
+  }
+})
+
+
+
+const loading = ref(false);
+let progressText = ref("Загрузка...");
+const available_time_hours = ref('');
+const transport_type = ref('walking');
+const address = ref('');
+const latitude = ref(null);
+const longitude = ref(null);
+
+
+/*
+  Обращение к службам геолокации за метсоположением пользователя
+*/
+async function getgeo() {
+  //alert('Запрашиваем ваше местоположение!');
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    });
+    latitude.value = position.coords.latitude;
+    longitude.value = position.coords.longitude;
+
+    let result = await RouteService.getAddressByCoordinates(latitude.value, longitude.value);
+    address.value = result;
+    console.log(result);
+  } catch (e) {
+    console.log(e);
+    alert("Разрешите получение локации для корректной работы приложения.");
+  }
 }
 
 function goback() {
   router.push({ path: '/myroutes' });
 }
 
-const loading = ref(false);
+/*
+  ВРОДЕ КАК ГЕНЕРАЦИЯ МАРШРУТА
 
-function startLoading() {
+
+  ПОДГОТОВИТЬ СЛЕДУЮЩИЕ ДАННЫЕ ЕГОР
+  RouteRequers
+  user_id
+  latitude
+  longitude
+  transport_type
+  available_time_hours
+*/
+async function startLoading() {
+  if (!latitude.value || !longitude.value) {
+    alert('Пожалуйста, укажите местоположение');
+    return;
+  }
+
+  const lat = parseFloat(latitude.value);
+  const lon = parseFloat(longitude.value);
+
+  if (isNaN(lat) || isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+    alert('Некорректные координаты');
+    return;
+  }
+
+  if (!available_time_hours.value || parseFloat(available_time_hours.value) <= 0) {
+    alert('Пожалуйста, укажите корректное время (больше 0)');
+    return;
+  }
+
   loading.value = true;
 
-  setTimeout(() => {
-    loading.value = false; // Убираем загрузку
-    router.push('/readyroute'); // Переход на страницу логина
-  }, 2000);
+  const userData = await UserService.getUserData();
+
+  let routeData = {
+    user_id: userData.id,
+    latitude: lat,
+    longitude: lon,
+    transport_type: transport_type.value,
+    available_time_hours: parseFloat(available_time_hours.value)
+  };
+
+  console.log('Отправляемые данные:', routeData);
+
+  try {
+  const response = await RouteService.createRouteTask(routeData)
+
+  const { task_id, status, message } = response;
+
+  const eventSource = new EventSource(`${settings.API_BASE_URL}/routes/events/${task_id}`);
+
+    eventSource.addEventListener('connected', (e) => {
+      console.log("connected event:", e.data);
+      progressText.value = 'Обработка запроса...';
+    });
+
+    eventSource.addEventListener('processing', (e) => {
+      console.log("processing event:", e.data);
+      progressText.value = 'Передача данных в AI...';
+    });
+
+    eventSource.addEventListener('ai_response', (e) => {
+      console.log("ai_response event:", e.data);
+      progressText.value = 'Получены данные от AI...';
+    });
+
+    eventSource.addEventListener('route_building', (e) => {
+      progressText.value = 'Построение маршрута...';
+    });
+
+
+    eventSource.addEventListener('completed', (e) => {
+      console.log("completed event:", e.data);
+      progressText.value = 'Маршрут готов!';
+      eventSource.close();
+      setTimeout(() => {
+        loading.value = false;
+        router.push({path: '/readyroute', query: {id: JSON.parse(e.data).route.route_id}});
+      }, 2000);
+  });
+
+  eventSource.addEventListener('error', (e) => {
+    const data = JSON.parse(e.data);
+    loading.value = false;
+    alert("ERROR: " + data.message);
+    eventSource.close();
+  });
+  } catch (error) {
+    loading.value = false;
+    console.error('Ошибка:', error);
+    alert('Ошибка при создании маршрута: ' + (error.response?.data?.detail || error.message));
+  }
 }
 
-//
-// ВЗАИМОДЕЙСТВИЕ С СЕРВЕРОМ !!!! -> Отправка выбранного места и времени пользователем на сервер
-//
 function handleButtonClick() {
-  alert('Отправляем информацию!'); // Логика работы сервера
-  startLoading(); 
-  setTimeout(sendToServer, 2000); 
+  startLoading();
 }
+
+
+// Автодополнение адреса
+const suggestions = ref([]);
+const showDropdown = ref(false);
+async function onAddressInput() {
+  if (address.value.length < 3) {
+    showDropdown.value = false;
+    return;
+  }
+
+  try {
+    let results;
+    if (latitude.value && longitude.value) {
+      results = await RouteService.getAddressSuggestions(address.value, `${latitude.value},${longitude.value}`);
+    } else {
+      results = await RouteService.getAddressSuggestions(address.value);
+    }
+
+    suggestions.value = results.locations;
+    showDropdown.value = true;
+  } catch (error) {
+    console.error('Ошибка при получении подсказок адреса:', error);
+  }
+}
+
+async function selectSuggestion(suggestion) {
+  address.value = suggestion.name;
+  showDropdown.value = false;
+
+
+  const result = await RouteService.getCoordinatesByAddress(suggestion.name);
+
+  latitude.value = result.lat;
+  longitude.value = result.lon;
+}
+
 </script>
 
 
@@ -45,19 +200,39 @@ function handleButtonClick() {
 
 
     <h1 class="title">
-      Укажите свободное<br />
-      время и адрес
+      Укажите данные <br> для маршрута
     </h1>
 
     <div class="inputs">
+       <div class="field">
+         <p>Адрес</p>
+         <input type="text" @input="onAddressInput" v-model="address" class="style-input" placeholder="Введите адрес..." />
+         <div v-if="showDropdown" ref="dropdown" class="suggestions-dropdown">
+           <ul>
+             <li
+                 v-for="suggestion in suggestions"
+                 :key="suggestion.id"
+                 @click="selectSuggestion(suggestion)"
+             >
+               {{ suggestion.suggested }}
+             </li>
+           </ul>
+         </div>
+       </div>
+
       <div class="field">
         <p>Свободное время (в часах)</p>
-        <input type="number" class="style-input" placeholder="Введите время..." min="0" step="0.5"/>
+        <input type="number" v-model="available_time_hours" class="style-input" placeholder="Введите время..." />
       </div>
 
       <div class="field">
-        <p>Адрес</p>
-        <input type="text" class="style-input" placeholder="Введите адрес..." />
+        <p>Тип транспорта</p>
+        <select v-model="transport_type" class="style-input">
+          <option value="walking">Пешком</option>
+          <option value="bicycle">Велосипед</option>
+          <option value="car">Машина</option>
+          <option value="public_transport">Общественный транспорт</option>
+        </select>
       </div>
 
       <button class="share-button" @click="getgeo()">Поделиться местоположением</button>
@@ -71,7 +246,7 @@ function handleButtonClick() {
         <div class="spinner">
             <div class="dot" v-for="n in 9" :key="n"></div>
         </div>
-        <p class="loading-text">Загрузка...</p>
+        <p class="loading-text">{{ progressText }}</p>
     </div>
   </transition>
 
@@ -88,18 +263,18 @@ function handleButtonClick() {
     align-items: center;
     padding: 2rem;
     height: 100vh;
- 
+
     position: relative;
-    box-sizing: border-box; 
+    box-sizing: border-box;
   }
 
   .back-button {
     position: absolute;
     top: 1.2rem;
-    left: 35px; 
+    left: 35px;
     background: none;
     border: none;
-    cursor: pointer; 
+    cursor: pointer;
   }
 
   .title {
@@ -188,9 +363,9 @@ function handleButtonClick() {
   height: 100%;
   background: white;
   display: flex;
-  flex-direction: column; 
-  justify-content: center; 
-  align-items: center;     
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
   z-index: 1000;
 }
@@ -304,4 +479,46 @@ function handleButtonClick() {
 .fade-enter-from, .fade-leave-to {
   opacity: 0;
 }
+  .field {
+    position: relative; /* Добавлено для позиционирования дропдауна относительно поля */
+    width: 100%;
+  }
+
+  .suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #f7f7f7; /* Соответствует фону input */
+    border: 1.5px solid #ccc; /* Соответствует бордеру input */
+    border-top: none; /* Без верхней границы для seamless соединения */
+    border-radius: 0 0 10px 10px; /* Нижние углы как у input (верхние обрезаны) */
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1001; /* Выше loader-screen (1000) */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .suggestions-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .suggestions-dropdown li {
+    padding: 10px 14px; /* Соответствует padding input */
+    cursor: pointer;
+    font-size: 16px; /* Соответствует font-size input */
+    color: #333; /* Соответствует цвету текста */
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease; /* Плавный hover как у input */
+  }
+
+  .suggestions-dropdown li:hover {
+    background: #fff; /* Как при focus input */
+  }
+
+  .suggestions-dropdown li:last-child {
+    border-bottom: none;
+  }
 </style>
