@@ -1,7 +1,7 @@
 <script setup>
 import auth from "@/api/auth.js";
 import routes from "@/api/routes.js";
-import {settings} from "@/api/env.js";
+import {settings} from "@/api/settings.js";
 import router from './../router'
 
 function navigate(){
@@ -61,7 +61,6 @@ onMounted(async () => {
     align-items: center;
     height: 100vh;
     padding: 2rem;
-    background-color: #fff;
     position: relative;
     box-sizing: border-box;
   }
@@ -106,9 +105,6 @@ onMounted(async () => {
   }
   
   .plus-button {
-    position: absolute;
-    bottom: 1.5rem;
-    right: 1.5rem;
     background: none;
     border: none;
     cursor: pointer;
